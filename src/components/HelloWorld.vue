@@ -1,296 +1,205 @@
-
 <template>
-  <v-app>
-    <v-data-table
-    :items-per-page="-1" 
-    :items="courseProgrammChildrens" 
-    :headers="headers"
-      class="elevation-1"
-    ></v-data-table>
-    <!-- Навигация -->
-    
-    <v-bottom-navigation
-
-      color="primary"
-      grow
-    >
-      <v-btn type="button" @click="show_add= !show_add">
-        <span>Добавить данные</span>
-      </v-btn>
-  
-      <v-btn type="button" @click="show_change= !show_change">
-        <span>Изменить данные</span>
-  
-      </v-btn>
-  
-      <v-btn type="button" @click="Del_data">
-        <span>Удалить данные</span>
-  
-      </v-btn>
-    </v-bottom-navigation>
-    
-    <!-- Если show_add:true, появляется форма добавления данных -->
-    <div v-if="show_add" >
-      <v-text-field v-model="ID" label="Введите ID" v-on:input="ID = $event.target.value"></v-text-field>
-      <v-text-field v-model="Code" label="Введите Code" v-on:input="Code = $event.target.value"></v-text-field>
-      <v-text-field v-model="Name" label="Введите Name" v-on:input="Name = $event.target.value"></v-text-field>
-      <v-text-field v-model="Year" label="Введите Year" v-on:input="Year = $event.target.value"></v-text-field>
-      <v-text-field v-model="EduForm" label="Введите EduForm" v-on:input="EduForm = $event.target.value"></v-text-field>
-      <v-text-field v-model="EduLevel" label="Введите Edulevel" v-on:input="EduLevel = $event.target.value"></v-text-field>
-      <v-text-field v-model="ParentProgramm" label="ParentProgram" v-on:input="ParentProgramm = $event.target.value"></v-text-field>
-      <v-btn  type="button" @click="Add_data(ID, Code, Name, Year, EduForm, EduLevel, ParentProgramm)">Добавить данные</v-btn>
-</div>
-<!-- Если show_change:true, появляется форма изменения данных -->
-  <div v-if ='show_change'>
-    <v-combobox
-    filled
-  hide-selected
-  outlined
-  :items="courseProgrammChildrens" 
-  :item-text="item => item.ID" 
-  v-model="ID"
-  @input="ID = $event.target.value"
-  :item-value="item => item.ID"
-></v-combobox>
-<v-combobox
-  filled
-  hide-selected
-  outlined
-  :items="courseProgrammChildrens" 
-  item-text="Code"
-  item-value="Code"
-  v-model="Code"
-  v-on:input="[ID, Code, Name, Year, EduForm, EduLevel, ParentProgramm] = [ID, $event.target.value, Name, Year, EduForm, EduLevel, ParentProgramm]"
-></v-combobox>
-<v-combobox
-  filled
-  hide-selected
-  outlined
-  :items="courseProgrammChildrens" 
-  item-text="Name" 
-  item-value="Name"
-  v-model="Name"
-  v-on:input="[ID, Code, Name, Year, EduForm, EduLevel, ParentProgramm] = [ID, Code, $event.target.value, Year, EduForm, EduLevel, ParentProgramm]"
-></v-combobox>
-<v-combobox
-  filled
-  hide-selected
-  outlined
-  :items="courseProgrammChildrens" 
-  item-text="Year" 
-  item-value="Year"
-  v-model="Year"
-  v-on:input="[ID, Code, Name, Year, EduForm, EduLevel, ParentProgramm] = [ID, Code, Name, $event.target.value, EduForm, EduLevel, ParentProgramm]"
-></v-combobox>
-<v-combobox
-  filled
-  hide-selected
-  outlined
-  :items="courseProgrammChildrens" 
-  item-text="EduForm" 
-  item-value="EduForm"
-  v-model="EduForm"
-  v-on:input="[ID, Code, Name, Year, EduForm, EduLevel, ParentProgramm] = [ID, Code, Name, Year, $event.target.value, EduLevel, ParentProgramm]"
-></v-combobox>
-<v-combobox
-  filled
-  hide-selected
-  outlined
-  :items="courseProgrammChildrens" 
-  item-text="EduLevel" 
-  item-value="EduLevel"
-  v-model="EduLevel"
-  v-on:input="[ID, Code, Name, Year, EduForm, EduLevel, ParentProgramm] = [ID, Code, Name, Year, EduForm, $event.target.value, ParentProgramm]"
-></v-combobox>
-<v-combobox
-  filled
-  hide-selected
-  outlined
-  :items="courseProgrammChildrens" 
-  item-text="ParentProgramm" 
-  item-value="ParentProgramm"
-  v-model="ParentProgramm"
-  v-on:input="[ID, Code, Name, Year, EduForm, EduLevel, ParentProgramm] = [ID, Code, Name, Year, EduForm, EduLevel, $event.target.value]"
-></v-combobox>
-<v-btn  type="button" @click="Change_data(ID, Code, Name, Year, EduForm, EduLevel, ParentProgramm)">Изменить данные</v-btn>
-  </div>
-  </v-app>
+  <v-data-table :headers="headers" :items="courseProgrammChildrens"  :search="search" class="elevation-1" fixed-header height="350px">
+    <template v-slot:top>
+      <v-text-field v-model="search" append-icon="mdi-magnify" label="Поиск" dense outlined single-line hide-details></v-text-field>
+      <v-toolbar flat color="white">
+        <v-toolbar-title>Образование</v-toolbar-title>
+        <v-divider class="mx-4" inset vertical></v-divider>
+        <v-spacer></v-spacer>
+        <v-dialog v-model="dialog" max-width="500px">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">Добавить</v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              <span class="headline">{{ formTitle }}</span>
+            </v-card-title>
+<v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.Code" label="Code"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.Name" label="Name"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.Year" label="Year"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.EduForm" label="EduForm"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.EduLevel" label="EduLevel"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.ParentProgramm" label="ParentProgramm"></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="close">Выход</v-btn>
+              <v-btn color="blue darken-1" text @click="save">Сохранить</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-toolbar>
+    </template>
+    <template v-slot:[`item.actions`]="{ item }">
+      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+    </template>
+    <template v-slot:no-data>
+      <v-btn color="primary" @click="initialize">Инициализация</v-btn>
+    </template>
+  </v-data-table>
 </template>
-
-
-
 <script>
 export default {
-  data() {
-    return {
+  name: "HelloWorld",
+  data: () => ({
+    search: '',
+    dialog: false,
+    headers: [
+      
+      // { text: 'id', value: 'id' },
+      { text: 'Code', value: 'Code' },
+      { text: 'Name', value: 'Name' },
+      { text: 'Year', value: 'Year' },
+      { text: 'EduForm', value: 'EduForm' },
+      { text: 'EduLevel', value: 'EduLevel' },
+      { text: 'ParentProgramm', value: 'ParentProgramm' },
+      { text: 'Действия', value: 'actions', sortable: false , width: "100px"},
+    ],
+    obr_form:[{
+      id: 1,
+      Name: 'Образовательная форма 1',
+    },
+    { id: 2,
+      Name: 'Образовательная форма 2'},
+    {id: 3,
+      Name: 'Образовательная форма 3'},
+    {id: 4,
+      Name: 'Образовательная форма 4'},
+    {
+      id: 5,
+      Name: 'Образовательная форма 5'
+    }
+  ],
+  level_obr:[{
+    id: 11,
+    Name: 'Уровень образования 1',
+  },
+  { id: 22,
+    Name: 'Уровень образования 2'},
+    {
+    id: 33,
+    Name: 'Уровень образования 3',
+  },
+  { id: 44,
+    Name: 'Уровень образования 4'}
+  
+  ],
 
-      // znach:{
-      // ID: '',
-      // Code: '',
-      // Name: '',
-      // Year: '',
-      // EduForm: '',
-      // EduLevel: '',
-      // ParentProgramm: '',
-      // },
-
-      ID: '',
+  courseProgrammChildrens: [],
+    editedIndex: -1,
+    editedItem: {
+      id: 0,
       Code: '',
       Name: '',
-      Year: '',
-      EduForm: '',
-      EduLevel: '',
-      ParentProgramm: '',
+      Year: 0,
+      EduForm: 0,
+      EduLevel: 0,
+      ParentProgramm: 0},
 
-      show_add: false,
-      show_change: false,
+    defaultItem: {
+      id: 0,
+      Code: 'Новый код',
+      Name: 'Текст',
+      Year: 0,
+      EduForm: 0,
+      EduLevel: 0,
+      ParentProgramm: 0 } }),
 
-      headers: [
-        {
-          text: 'Образовательная программа',
-          align: 'start',
-          sortable: false,
-          value: 'name',
-        },
-        { text: 'ID', value: 'ID' },
-        { text: 'Code', value: 'Code' },
-        { text: 'Name', value: 'Name' },
-        { text: 'Year', value: 'Year' },
-        { text: 'EduForm', value: 'EduForm' },
-        { text: 'EduLevel', value: 'EduLevel' },
-        { text: 'ParentProgramm', value: 'ParentProgramm' }
-      ],
-
-      obr_form:[{
-        id: 1,
-        Name: 'Образовательная форма 1',
-      },
-      { id: 2,
-        Name: 'Образовательная форма 2'},
-
-      {id: 3,
-        Name: 'Образовательная форма 3'},
-
-      {id: 4,
-        Name: 'Образовательная форма 4'},
-      {
-        id: 5,
-        Name: 'Образовательная форма 5'
-      }
-
-    ],
-
-    level_obr:[{
-      id: 11,
-      Name: 'Уровень образования 1',
+  computed: {
+    formTitle() {
+      return this.editedIndex === -1 ? "Новый элемент" : "Редактор элемента";
     },
-    { id: 22,
-      Name: 'Уровень образования 2'},
-      {
-      id: 33,
-      Name: 'Уровень образования 3',
+  },
+  watch: {
+    dialog(val) {
+      val || this.close();
     },
-    { id: 44,
-      Name: 'Уровень образования 4'}
-    
-    ],
-
-      courseProgrammChildrens: [
-        {
-          ID: null,
-          Code: "",
-          Name: "",
-          Year: null,
-          EduForm: null,
-          EduLevel: null,
-          ParentProgramm: null,
-        },
-        
-      ],
-
-    };
+  },
+  created() {
+    this.initialize();
   },
   methods: {
+    initialize() {
+      this.courseProgrammChildrens = [
+      {
+      id: 1,
+      Code: "ed1",
+      Name: "Текст 1",
+      Year: 2023,
+      EduForm: 3,
+      EduLevel: 1,
+      ParentProgramm: 2 },
 
-    // saveData() {
-    //   var data = {
-    //     ID: this.courseProgrammChildrens.ID,
-    //     Code: this.courseProgrammChildrens.Code,
-    //     Name: this.courseProgrammChildrens.Name,
-    //     Year: this.courseProgrammChildrens.Year,
-    //     EduForm: this.courseProgrammChildrens.EduForm,
-    //     EduLevel: this.courseProgrammChildrens.EduLevel,
-    //     ParentProgramm: this.courseProgrammChildrens.ParentProgramm
-    //   };
+      {
+        id: 2,
+        Code: "ed2",
+        Name: "Текст 2",
+        Year: 2023,
+        EduForm: 2,
+        EduLevel: 1,
+        ParentProgramm: 2},
 
-    Add_data(ID, Code, Name, Year, EduForm, EduLevel, ParentProgramm){
-      //alert(ID + " " + Code + " " + Name + " " + Year + " " + EduForm + " " + EduLevel + " " + ParentProgramm);
-      // this.$refs.myDataTable.items.push({ ID: ID, Code: Code, Name: Name, Year: Year, EduForm: EduForm, EduLevel: EduLevel, ParentProgramm: ParentProgramm})
-      this.courseProgrammChildrens.push({
-        ID: ID,
-        Code: Code,
-        Name: Name,
-        Year: Year,
-        EduForm: EduForm,
-        EduLevel: EduLevel,
-        ParentProgramm: ParentProgramm,
-      });
-      this.show = false;
+      {
+      id: 3,
+      Code: "ed3",
+      Name: "Текст 3",
+      Year: 2023,
+      EduForm: 4,
+      EduLevel: 1,
+      ParentProgramm: 1 },
 
+      {
+      id: 4,
+      Code: "ed4",
+      Name: "Текст 4",
+      Year: 2023,
+      EduForm: 5,
+      EduLevel: 5,
+      ParentProgramm: 5},];
     },
-    
-    Change_data(ID, Code, Name, Year, EduForm, EduLevel, ParentProgramm){
-      
-      alert(this.ID + " " + Code + " " + Name + " " + Year + " " + EduForm + " " + EduLevel + " " + ParentProgramm);
-      if (ID && Code && Name && Year && EduForm && EduLevel && ParentProgramm !=='undefined') {
-      //   this.courseProgrammChildrens.push({
-      //   ID: ID,
-      //   Code: Code,
-      //   Name: Name,
-      //   Year: Year,
-      //   EduForm: EduForm,
-      //   EduLevel: EduLevel,
-      //   ParentProgramm: ParentProgramm,
-        
-      // })
-      
-      // this.$refs.dataTable.updateItem()({
-      // ID: ID,
-      // Code: Code,
-      // Name: Name,
-      // Year: Year,
-      // EduForm: EduForm,
-      // EduLevel: EduLevel,
-      // ParentProgramm: ParentProgramm
-      // })
-
-      
+    editItem(item) {
+      this.editedIndex = this.courseProgrammChildrens.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+    },
+    deleteItem(item) {
+      const index = this.courseProgrammChildrens.indexOf(item);
+      confirm("Вы уверены, что хотите удалить этот элемент?") &&
+        this.courseProgrammChildrens.splice(index, 1);
+    },
+    close() {
+      this.dialog = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
+    save() {
+      if (this.editedIndex > -1) {
+        Object.assign(this.courseProgrammChildrens[this.editedIndex], this.editedItem);
+      } else {
+        this.courseProgrammChildrens.push(this.editedItem);
       }
-      else{
-        alert("Заполните все поля");
-      }
-    
+      this.close();
+    },
   },
-      
-  Del_data(){
-
-  }
-}
 };
 </script>
-
-<style>
-
-.box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.box div {
-  width: 150px;
-  height: 150px;
-  align-items: center;
-  justify-content: center;
-}
-</style>
