@@ -1,7 +1,7 @@
 <template>
   <v-data-table :headers="headers" :items="courseProgrammChildrens"  :search="search" class="elevation-1" fixed-header height="350px">
     <template v-slot:top>
-      <v-text-field v-model="search" append-icon="mdi-magnify" label="Поиск" dense outlined single-line hide-details></v-text-field>
+      <div class="box"><v-text-field v-model="search" append-icon="mdi-magnify" label="Поиск" dense outlined single-line hide-details></v-text-field></div>
       <v-toolbar flat color="white">
         <v-toolbar-title>Образование</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
@@ -54,6 +54,14 @@
     <template v-slot:no-data>
       <v-btn color="primary" @click="initialize">Инициализация</v-btn>
     </template>
+    <div id="app">
+  <v-app id="inspire">
+    <v-treeview
+      activatable
+      :items="items"
+    ></v-treeview>
+  </v-app>
+</div>
   </v-data-table>
 </template>
 <script>
@@ -73,35 +81,6 @@ export default {
       { text: 'ParentProgramm', value: 'ParentProgramm' },
       { text: 'Действия', value: 'actions', sortable: false , width: "100px"},
     ],
-    obr_form:[{
-      id: 1,
-      Name: 'Образовательная форма 1',
-    },
-    { id: 2,
-      Name: 'Образовательная форма 2'},
-    {id: 3,
-      Name: 'Образовательная форма 3'},
-    {id: 4,
-      Name: 'Образовательная форма 4'},
-    {
-      id: 5,
-      Name: 'Образовательная форма 5'
-    }
-  ],
-  level_obr:[{
-    id: 11,
-    Name: 'Уровень образования 1',
-  },
-  { id: 22,
-    Name: 'Уровень образования 2'},
-    {
-    id: 33,
-    Name: 'Уровень образования 3',
-  },
-  { id: 44,
-    Name: 'Уровень образования 4'}
-  
-  ],
 
   courseProgrammChildrens: [],
     editedIndex: -1,
@@ -203,3 +182,12 @@ export default {
   },
 };
 </script>
+
+<style>
+.box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+</style>
