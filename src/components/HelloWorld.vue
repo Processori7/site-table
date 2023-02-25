@@ -27,10 +27,25 @@
                     <v-text-field v-model="editedItem.Year" label="Year"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.EduForm" label="EduForm"></v-text-field>
+                    <!-- Выбор EduForm -->
+                        <v-select
+                          v-model="editedItem.EduForm"
+                          :items="EduForm"
+                          label="EduForm"
+                          dense
+                          outlined
+                        ></v-select>
+
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.EduLevel" label="EduLevel"></v-text-field>
+                    <!-- Выбор EduLevel -->
+                    <v-select
+                          v-model="editedItem.EduLevel"
+                          :items="EduLevel"
+                          label="EduLevel"
+                          dense
+                          outlined
+                        ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field v-model="editedItem.ParentProgramm" label="ParentProgramm"></v-text-field>
@@ -54,20 +69,14 @@
     <template v-slot:no-data>
       <v-btn color="primary" @click="initialize">Инициализация</v-btn>
     </template>
-    <div id="app">
-  <v-app id="inspire">
-    <v-treeview
-      activatable
-      :items="items"
-    ></v-treeview>
-  </v-app>
-</div>
   </v-data-table>
 </template>
 <script>
 export default {
   name: "HelloWorld",
   data: () => ({
+    EduForm:['Образовательная форма 1', 'Образовательная форма 2', 'Образовательная форма 3', 'Образовательная форма 4', 'Образовательная форма 5'],
+    EduLevel:['Уровень образования 1', 'Уровень образования 2', 'Уровень образования 3', 'Уровень образования 4', 'Уровень образования 5'],
     search: '',
     dialog: false,
     headers: [
@@ -179,6 +188,28 @@ export default {
       }
       this.close();
     },
+    items: [
+      {
+        id: 1,
+        name: 'Форма образования :',
+        children: [
+          { id: 2, name: 'Образовательная форма 1' },
+          { id: 3, name: 'Образовательная форма 2' },
+          { id: 4, name: 'Образовательная форма 3' },
+          { id: 5, name: 'Образовательная форма 4' },
+        ],
+      },
+      {
+        id: 6,
+        name: 'Уровень образования :',
+        children: [
+          { id: 7, name: 'Уровень образования 1' },
+          { id: 8, name: 'Уровень образования 2' },
+          { id: 9, name: 'Уровень образования 3' },
+
+        ],
+      },
+    ],
   },
 };
 </script>
